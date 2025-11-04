@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import ProjectTimelineManager from '../components/ProjectTimelineManager';
 
 export default function DemoPage() {
   const [inputValue, setInputValue] = useState('');
@@ -19,20 +20,28 @@ export default function DemoPage() {
   };
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-4xl font-bold">אזור הדמו</h1>
-          <Link
-            href="/"
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
-          >
-            חזרה לדף הבית
-          </Link>
+    <div className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header with Timeline Widget */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">אזור הדמו</h1>
+            <Link
+              href="/"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
+            >
+              חזרה לדף הבית
+            </Link>
+          </div>
+
+          {/* Project Timeline Widget */}
+          <div className="flex justify-center">
+            <ProjectTimelineManager />
+          </div>
         </div>
 
-        <div className="p-6 border rounded-lg space-y-4">
-          <h2 className="text-2xl font-semibold">ניהול רשימה</h2>
+        <div className="p-6 border rounded-lg space-y-4 bg-white dark:bg-gray-800">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">ניהול רשימה</h2>
           <p className="text-gray-600 dark:text-gray-400">
             הוסף, ערוך ומחק פריטים ברשימה האינטראקטיבית שלך.
           </p>
