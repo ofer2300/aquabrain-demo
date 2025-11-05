@@ -17,7 +17,13 @@ export default function Home() {
             תמיכה מלאה בעברית ו-RTL, Tailwind CSS ומבנה אפליקציה מודרני.
           </p>
           
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Link
+              href="/timeline"
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors shadow-lg"
+            >
+              🚀 ציר זמן לפרויקט
+            </Link>
             <Link
               href="/demo"
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -35,20 +41,26 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="pt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
-          <div className="p-6 border rounded-lg">
+        <div className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-right">
+          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
+            <h3 className="font-bold mb-2">🚀 ציר זמן לפרויקט</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              ניהול משימות ואבני דרך עם ממשק אינטראקטיבי
+            </p>
+          </div>
+          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h3 className="font-bold mb-2">Next.js 14</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               גרסה עדכנית עם App Router ותמיכה ב-TypeScript
             </p>
           </div>
-          <div className="p-6 border rounded-lg">
+          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h3 className="font-bold mb-2">תמיכה מלאה בעברית</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               RTL וכיוון טקסט מימין לשמאל
             </p>
           </div>
-          <div className="p-6 border rounded-lg">
+          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h3 className="font-bold mb-2">Tailwind CSS</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               עיצוב מודרני ורספונסיבי
