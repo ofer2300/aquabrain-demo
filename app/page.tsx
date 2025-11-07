@@ -19,10 +19,16 @@ export default function Home() {
           
           <div className="flex gap-4 justify-center flex-wrap">
             <Link
+              href="/construction"
+              className="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-colors shadow-lg"
+            >
+              🏗️ גאנט בנייה
+            </Link>
+            <Link
               href="/timeline"
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors shadow-lg"
             >
-              🚀 ציר זמן לפרויקט
+              🚀 ציר זמן כללי
             </Link>
             <Link
               href="/demo"
@@ -41,7 +47,13 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-right">
+        <div className="pt-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-right">
+          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+            <h3 className="font-bold mb-2">🏗️ גאנט תכנון ורישוי</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              תהליך מלא של רישוי בנייה - 8 שלבים ו-40+ משימות
+            </p>
+          </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h3 className="font-bold mb-2">🚀 ציר זמן לפרויקט</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -58,12 +70,6 @@ export default function Home() {
             <h3 className="font-bold mb-2">תמיכה מלאה בעברית</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               RTL וכיוון טקסט מימין לשמאל
-            </p>
-          </div>
-          <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
-            <h3 className="font-bold mb-2">Tailwind CSS</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              עיצוב מודרני ורספונסיבי
             </p>
           </div>
         </div>
