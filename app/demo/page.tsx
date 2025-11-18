@@ -1,40 +1,112 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+  createdAt: string;
+}
 
 export default function DemoPage() {
   const [inputValue, setInputValue] = useState('');
-  const [items, setItems] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleAdd = () => {
-    if (inputValue.trim()) {
-      setItems([...items, inputValue.trim()]);
-      setInputValue('');
+  // Load tasks on component mount
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/tasks');
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTasks(data.tasks);
+      }
+    } catch (err) {
+      setError('שגיאה בטעינת המשימות');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDelete = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
+  const handleAdd = async () => {
+    if (!inputValue.trim()) return;
+
+    try {
+      setLoading(true);
+      setError('');
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: inputValue.trim() }),
+      });
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTasks([...tasks, data.task]);
+        setInputValue('');
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError('שגיאה בהוספת המשימה');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await fetch(`/api/tasks?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTasks(tasks.filter((task) => task.id !== id));
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError('שגיאה במחיקת המשימה');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="p-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex justify-between items-center">
+        <div>
           <h1 className="text-4xl font-bold">אזור הדמו</h1>
-          <Link
-            href="/"
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
-          >
-            חזרה לדף הבית
-          </Link>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            ניהול משימות עם API Routes
+          </p>
         </div>
 
+        {error && (
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400">
+            {error}
+          </div>
+        )}
+
         <div className="p-6 border rounded-lg space-y-4">
-          <h2 className="text-2xl font-semibold">ניהול רשימה</h2>
+          <h2 className="text-2xl font-semibold">ניהול משימות</h2>
           <p className="text-gray-600 dark:text-gray-400">
-            הוסף, ערוך ומחק פריטים ברשימה האינטראקטיבית שלך.
+            הוסף ומחק משימות באמצעות API Routes של Next.js
           </p>
 
           <div className="flex gap-2">
@@ -42,31 +114,39 @@ export default function DemoPage() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
-              placeholder="הכנס פריט חדש..."
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+              onKeyPress={(e) => e.key === 'Enter' && !loading && handleAdd()}
+              placeholder="הכנס משימה חדשה..."
+              disabled={loading}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 disabled:opacity-50"
             />
             <button
               onClick={handleAdd}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={loading || !inputValue.trim()}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              הוסף
+              {loading ? 'מוסיף...' : 'הוסף'}
             </button>
           </div>
 
-          {items.length > 0 && (
+          {tasks.length > 0 && (
             <div className="space-y-2 mt-4">
-              <h3 className="font-semibold">הפריטים שלי:</h3>
+              <h3 className="font-semibold">המשימות שלי ({tasks.length}):</h3>
               <ul className="space-y-2">
-                {items.map((item, index) => (
+                {tasks.map((task) => (
                   <li
-                    key={index}
+                    key={task.id}
                     className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
                   >
-                    <span>{item}</span>
+                    <div className="flex-1">
+                      <div>{task.title}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        נוצר: {new Date(task.createdAt).toLocaleString('he-IL')}
+                      </div>
+                    </div>
                     <button
-                      onClick={() => handleDelete(index)}
-                      className="px-3 py-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                      onClick={() => handleDelete(task.id)}
+                      disabled={loading}
+                      className="px-3 py-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors disabled:opacity-50"
                     >
                       מחק
                     </button>
@@ -76,9 +156,15 @@ export default function DemoPage() {
             </div>
           )}
 
-          {items.length === 0 && (
+          {tasks.length === 0 && !loading && (
             <div className="text-center py-8 text-gray-400">
-              אין פריטים ברשימה. הוסף פריט ראשון!
+              אין משימות ברשימה. הוסף משימה ראשונה!
+            </div>
+          )}
+
+          {loading && tasks.length === 0 && (
+            <div className="text-center py-8 text-gray-400">
+              טוען משימות...
             </div>
           )}
         </div>
@@ -87,20 +173,22 @@ export default function DemoPage() {
           <div className="p-6 border rounded-lg">
             <h3 className="text-xl font-semibold mb-3">תכונות מרכזיות</h3>
             <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-              <li>• מרתק אינטראקטיבי</li>
+              <li>• ניהול משימות אינטראקטיבי</li>
+              <li>• API Routes עם Next.js</li>
               <li>• תמיכה מלאה ב-RTL</li>
-              <li>• עיצוב מודרני</li>
-              <li>• מצב כהה/בהיר</li>
+              <li>• עיצוב מודרני ורספונסיבי</li>
+              <li>• מצב כהה/בהיר אוטומטי</li>
             </ul>
           </div>
 
           <div className="p-6 border rounded-lg">
             <h3 className="text-xl font-semibold mb-3">טכנולוגיות</h3>
             <ul className="space-y-2 text-gray-600 dark:text-gray-400">
-              <li>• Next.js 14</li>
-              <li>• TypeScript</li>
-              <li>• Tailwind CSS</li>
-              <li>• React Hooks</li>
+              <li>• Next.js 14 App Router</li>
+              <li>• TypeScript 5</li>
+              <li>• Tailwind CSS 3</li>
+              <li>• React 18 Hooks</li>
+              <li>• RESTful API Routes</li>
             </ul>
           </div>
         </div>
